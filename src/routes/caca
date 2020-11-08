@@ -1,0 +1,118 @@
+const express = require('express');
+const router = express.Router();
+
+const mysqlConnection = require('../database');
+
+router.get('/', (req,res) =>{
+    mysqlConnection.query('SELECT * FROM players',(err,rows,fields) =>{
+        if(!err){
+            res.json(rows);
+        } else {
+            console.log(err);
+        }
+    })
+})
+
+router.get('/:id',(req,res)=>{
+    const{id}= req.params;
+    mysqlConnection.query('SELECT*FROM players WHERE id = ?',[id],(err,rows,fields)=>{
+        if(!err){
+            res.json(rows);
+        } else {
+            console.log(err);
+        }
+    })
+    console.log(id);
+})
+
+router.post('/',(req,res)=>{
+    const {id,name,datoin,datopor} = req.body;
+    console.log(req.body);
+    const query = `
+        SET @id = ?;
+        SET @name = ?;
+        SET @datoin = ?;
+        SET @datopor = ?;
+        CALL playerAddOrEdit(@id,@name,@datoin,@datopor);
+    `;
+    mysqlConnection.query(query,[id,name,datoin,datopor],(err,rows,fields) =>{
+        if(!err){
+            res.json({Status:'Player Saved'});
+        } else {
+            console.log(err);
+        }
+    })
+})
+
+router.put('/:id',(req,res)=>{
+    const {name,datoin,datopor} = req.body;
+    const {id} = req.params;
+    const query = `
+    SET @id = ?;
+    SET @name = ?;
+    SET @datoin = ?;
+    SET @datopor = ?;
+    CALL playerAddOrEdit(@id,@name,@datoin,@datopor);
+    `;
+    mysqlConnection.query(query,[id,name,datoin,datopor],(err,rows,fields) =>{
+        if(!err){
+            res.json({Status:'Player Update'});
+        } else {
+            console.log(err);
+        }
+    })
+
+})
+
+router.delete('/:id',(req,res)=>{
+    const {id} = req.params;
+    mysqlConnection.query('DELETE FROM players WHERE id =?',[id],(err,rows,fields)=>{
+        if(!err){
+            res.json({Status:'Player Deleted'});
+        } else {
+            console.log(err);
+        }
+    })
+})
+
+router.post('/attributes/', (req,res,next)=>{
+    var post_data = req.body;
+    console.log(post_data);
+    var id_player = post_data.id_player;
+    var nameat = post_data.nameat;
+    var namecategory = post_data.namecategory;
+    var data = post_data.data;
+    var data_type = post_data.data_type;
+    var input_source = post_data.input_source;
+    var date_time = post_data.date_time;
+
+    
+    console.log('casienelquery');
+    mysqlConnection.query('SELECT*FROM `attributes` where players_id_players=? AND name =?',[id_player,namecategory], function(err,rows,fields){
+        mysqlConnection.on('error',function(err){
+            console.log('MySQL Error',err);
+        });
+
+        console.log('CASI EN EL IF');
+        if (rows && rows.length){
+            var attributes_id_attributes = rows[0].id_attributes
+            console.log('ENTRO EN EL IF');
+            mysqlConnection.query('INSERT INTO `subattributes` (`nameat`,`namecategory`,`data`,`data_type`,`input_source`,`date_time`,`attributes_id_attributes`)VALUES (?,?,?,?,?,?,?)',[nameat,namecategory,data,data_type,input_source,date_time,attributes_id_attributes], function(err,rows,fields){
+                mysqlConnection.on('error',function(err){
+                    console.log('[MySQL ERROR]',err);
+                    res.json('Attribute Upload Error',err);
+                });
+                res.json('Success');
+            });
+
+        } else{
+            res.json('No existe jugador')
+        }
+
+    });
+
+})
+
+module.exports = router;
+
+// A TODOS LOS JUGADORES QUE SE AGREGUEN A LA TABLA JUGADORES, DEBE AGREGARSE TODOS LOS ATRIBUTOS POSIBLES QUE ESTEN EN LA LISTA DE ATRIBUTOS INICIALIZADOS EN 0
