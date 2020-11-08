@@ -4,7 +4,7 @@ var bodyParse =require('body-parser');
 app.use(bodyParse.json());
 app.use(bodyParse.urlencoded({extended:true}));
 //Settings
-app.set('port',process.env.PORT || 3002);
+const port = process.env.PORT || 3002;
 
 //Middlewares
 app.use(express.json());
@@ -13,6 +13,6 @@ app.use(express.json());
 app.use(require('./routes/Players'))
 
 //Starting the server
-app.listen(3002, () => {
- console.log("El servidor está inicializado en el puerto 3002");
+app.listen(port, () => {
+ console.log(`listening on port ${port} ...... `);
 });
