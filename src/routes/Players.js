@@ -16,6 +16,12 @@ const mysqlConnection = require('../database');
     "date_time": "2019-05-16 13:17:17"
     }
 */
+
+/*
+Input: Json of sensor data
+Output: Void (Just stores the json in the database)
+Description: Simple MYSQL query
+*/
 router.post('/attributes/', (req,res,next)=>{
     console.log("asdasdasdasdasdsa");
     var post_data = req.body;
