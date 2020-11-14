@@ -18,6 +18,38 @@ const mysqlConnection = require('../database');
 */
 
 /*
+Input: Name, pass and age of that player
+Output: Void (Edits an existing player in the db)
+Description: Simple MYSQL query
+*/
+//Con id en 0 se ingresa un nuevo jugador, con cualquier otro id se edita el existente
+router.put('/attributes/bycategory/:id/:type',(req,res)=>{
+    console.log("entro en el PUT");
+    var post_data = req.body;
+    if(!req.body.id_player || !req.body.data){
+        return res.sendStatus(400).json({
+            error: 'Missing data'
+          })
+    }
+    console.log(post_data);
+    var id_player = Number(post_data.id_player);
+    var namecategory = post_data.namecategory;
+    var data = Number(post_data.data);
+    const query = 'UPDATE attributes SET data = ? WHERE attributes.name = ? AND attributes.players_id_players = ?'       
+    mysqlConnection.query(query,[data,namecategory,id_player],(err,rows,fields) =>{
+        if(!err){
+            res.json({Status:'Player s attribute update SUCCESSFUL'});
+            console.log("Lo logró");
+            
+        } else {
+            res.json({Status:'ERROR: Attribute Update'});
+            console.log(err);
+        }
+    })
+
+})
+
+/*
 Input: Json of sensor data
 Output: Void (Just stores the json in the database)
 Description: Simple MYSQL query
