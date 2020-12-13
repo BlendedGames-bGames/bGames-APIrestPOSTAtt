@@ -112,7 +112,11 @@ router.put('/player_attributes',(req,res)=>{
     let where = ' WHERE `playerss_attributes`.`id_playerss` = ? '
     let and = 'AND `playerss_attributes`.`id_attributes` = ? '
     let query = update+set+where+and
+    console.log(id_player)
+    console.log(id_attributes)
+    console.log(new_data)
 
+    console.log(query)
     for(let i = 0; i< id_attributes.length; i++){
         mysqlConnection.query(query,[new_data[i], id_player,id_attributes[i]], function(err2,rows2,fields2){
             if (!err2){
