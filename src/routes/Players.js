@@ -79,14 +79,13 @@ router.post('/adquired_subattribute/', (req,res,next)=>{
     for(let i = 0; i< id_conversions.length; i++){
         mysqlConnection.query(query,[id_player,id_sensor_endpoint,id_conversions[i], id_subattributes[i], new_data[i]], function(err2,rows2,fields2){
             if (!err2){
-                console.log('Antes del succes');
-                res.json('Success');
+                
             } else {
-                console.log(err2);
-                res.json('Error in add')
             }
         });
     }
+    console.log('Antes del succes');
+    res.json('Success');
   
         
 });
