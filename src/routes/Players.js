@@ -82,7 +82,7 @@ router.post('/adquired_subattribute/', (req,res,next)=>{
                 console.log('Antes del succes');
                 res.json('Success');
             } else {
-                console.log(err);
+                console.log(err2);
                 res.json('Error in add')
             }
         });
