@@ -107,23 +107,22 @@ router.put('/player_attributes',(req,res)=>{
 
     let date = new Date().toISOString().slice(0, 19).replace('T', ' ')
 
-    let update = 'UPDATE `playerss_attributes`'
+    let update = 'UPDATE `playerss_attributes` '
     let set = ' SET `data` = ?,`last_modified` = ' + '\''+date+'\'' 
-    let where = 'WHERE playerss_attributes.id_players = ?'
+    let where = ' WHERE playerss_attributes.id_playerss = ? '
     let and = 'AND playerss_attributes.id_attributes = ? '
     let query = update+set+where+and
 
     for(let i = 0; i< id_attributes.length; i++){
         mysqlConnection.query(query,[new_data[i], id_player,id_attributes[i]], function(err2,rows2,fields2){
             if (!err2){
-                console.log('Antes del succes');
-                res.json('Success');
+                
             } else {
-                console.log(err);
-                res.json('Error in add')
             }
         });
     }
+    console.log('Antes del succes');
+    res.json('Success');
 })
 
 
