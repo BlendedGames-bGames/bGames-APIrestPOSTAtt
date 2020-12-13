@@ -73,7 +73,7 @@ router.post('/adquired_subattribute/', (req,res,next)=>{
     }
     var date = new Date().toISOString().slice(0, 19).replace('T', ' ')
 
-    var insertInto = 'INSERT INTO `adquired_attribute` (`id_players`,`id_sensor_endpoint`,`id_conversion`,`id_subattributes`,`data`,`created_time`) VALUES'
+    var insertInto = 'INSERT INTO `adquired_subattribute` (`id_players`,`id_sensor_endpoint`,`id_conversion`,`id_subattributes`,`data`,`created_time`) VALUES'
     var values = '(?,?,?,?,?,'+ '\''+date +'\''+')'
     var query = insertInto+values
     for(let i = 0; i< id_conversions.length; i++){
