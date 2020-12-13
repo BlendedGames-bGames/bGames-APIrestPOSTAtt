@@ -109,8 +109,8 @@ router.put('/player_attributes',(req,res)=>{
 
     let update = 'UPDATE `playerss_attributes` '
     let set = ' SET `data` = ?,`last_modified` = ' + '\''+date+'\'' 
-    let where = ' WHERE playerss_attributes.id_playerss = ? '
-    let and = 'AND playerss_attributes.id_attributes = ? '
+    let where = ' WHERE `playerss_attributes`.`id_playerss` = ? '
+    let and = 'AND `playerss_attributes`.`id_attributes` = ? '
     let query = update+set+where+and
 
     for(let i = 0; i< id_attributes.length; i++){
