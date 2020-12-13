@@ -49,6 +49,86 @@ router.put('/attributes/bycategory/:id/:type',(req,res)=>{
 
 })
 
+
+/*
+var adquired_subattributes ={  
+        "id_player": id_player,        Ej: 1
+        "id_sensor_endpoint": id_sensor_endpoint, Ej: 1
+        "id_conversion": id_conversions,   Ej [3,4]
+        "id_subattributes":id_subattributes, Ej [5,5]
+        "new_data": results, Ej [4,5] Son puntos
+    }
+*/
+
+router.post('/adquired_subattribute/', (req,res,next)=>{
+    var adquired_subattribute = req.body;
+    var id_player = adquired_subattribute.id_player
+    var id_sensor_endpoint = adquired_subattribute.id_sensor_endpoint
+    var id_conversions = adquired_subattribute.id_conversions
+    var id_subattributes = adquired_subattribute.id_subattributes
+    var new_data = adquired_subattribute.new_data
+
+    if(!id_player || !id_sensor_endpoint|| !id_conversions|| !id_subattributes|| !new_data){
+        return res.sendStatus(400)
+    }
+    var date = new Date().toISOString().slice(0, 19).replace('T', ' ')
+
+    var insertInto = 'INSERT INTO `adquired_attribute` (`id_players`,`id_sensor_endpoint`,`id_conversion`,`id_subattributes`,`data`,`created_time`) VALUES'
+    var values = '(?,?,?,?,?,'+ '\''+date +'\''+')'
+    var query = insertInto+values
+    for(let i = 0; i< id_conversions.length; i++){
+        mysqlConnection.query(query,[id_player,id_sensor_endpoint,id_conversions[i], id_subattributes[i], new_data[i]], function(err2,rows2,fields2){
+            if (!err2){
+                console.log('Antes del succes');
+                res.json('Success');
+            } else {
+                console.log(err);
+                res.json('Error in add')
+            }
+        });
+    }
+  
+        
+});
+
+/*
+Input: 
+var dataChanges ={  
+        "id_player":  1
+        "id_attributes": [3,4] //Ej: id_attributes = , distintos
+        "new_data": [20,34]
+    }
+data = [20,10]
+Description: Simple MYSQL query
+*/
+router.put('/player_attributes',(req,res)=>{
+    let id_player = req.body.id_player;
+    let id_attributes = req.body.id_attributes;
+    let new_data = req.body.new_data
+
+    let date = new Date().toISOString().slice(0, 19).replace('T', ' ')
+
+    let update = 'UPDATE `playerss_attributes`'
+    let set = ' SET `data` = ?,`last_modified` = ' + '\''+date+'\'' 
+    let where = 'WHERE playerss_attributes.id_players = ?'
+    let and = 'AND playerss_attributes.id_attributes = ? '
+    let query = update+set+where+and
+
+    for(let i = 0; i< id_attributes.length; i++){
+        mysqlConnection.query(query,[new_data[i], id_player,id_attributes[i]], function(err2,rows2,fields2){
+            if (!err2){
+                console.log('Antes del succes');
+                res.json('Success');
+            } else {
+                console.log(err);
+                res.json('Error in add')
+            }
+        });
+    }
+})
+
+
+
 /*
 Input: Json of sensor data
 Output: Void (Just stores the json in the database)
