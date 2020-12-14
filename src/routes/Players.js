@@ -68,6 +68,8 @@ router.post('/adquired_subattribute/', (req,res,next)=>{
     var id_subattributes = adquired_subattribute.id_subattributes
     var new_data = adquired_subattribute.new_data
 
+    console.log('Estos son los attributes:')
+    console.log(adquired_subattribute)
     if(!id_player || !id_sensor_endpoint|| !id_conversions|| !id_subattributes|| !new_data){
         return res.sendStatus(400)
     }
