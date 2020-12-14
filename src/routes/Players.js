@@ -103,6 +103,7 @@ data = [20,10]
 Description: Simple MYSQL query
 */
 router.put('/player_attributes',(req,res)=>{
+    console.log(req.body)
     let id_player = req.body.id_player;
     let id_attributes = req.body.id_attributes;
     let new_data = req.body.new_data
