@@ -63,23 +63,21 @@ var adquired_subattributes ={
 router.post('/adquired_subattribute/', (req,res,next)=>{
     var adquired_subattribute = req.body;
     var id_player = adquired_subattribute.id_player
-    var id_sensor_endpoint = adquired_subattribute.id_sensor_endpoint
-    var id_conversions = adquired_subattribute.id_conversions
-    var id_subattributes = adquired_subattribute.id_subattributes
+    var id_subattributes_conversion_sensor_endpoint = adquired_subattribute.id_subattributes_conversion_sensor_endpoint
     var new_data = adquired_subattribute.new_data
 
     console.log('Estos son los attributes:')
     console.log(adquired_subattribute)
-    if(!id_player || !id_sensor_endpoint|| !id_conversions|| !id_subattributes|| !new_data){
+    if(!id_player || !id_subattributes_conversion_sensor_endpoint|| !new_data){
         return res.sendStatus(400)
     }
     var date = new Date().toISOString().slice(0, 19).replace('T', ' ')
 
-    var insertInto = 'INSERT INTO `adquired_subattribute` (`id_players`,`id_sensor_endpoint`,`id_conversion`,`id_subattributes`,`data`,`created_time`) VALUES'
+    var insertInto = 'INSERT INTO `adquired_subattribute` (`id_players`,`id_subattributes_conversion_sensor_endpoint`,`data`,`created_time`) VALUES'
     var values = '(?,?,?,?,?,'+ '\''+date +'\''+')'
     var query = insertInto+values
     for(let i = 0; i< id_conversions.length; i++){
-        mysqlConnection.query(query,[id_player,id_sensor_endpoint,id_conversions[i], id_subattributes[i], new_data[i]], function(err2,rows2,fields2){
+        mysqlConnection.query(query,[id_player,id_subattributes_conversion_sensor_endpoint[i], new_data[i]], function(err2,rows2,fields2){
             if (!err2){
                 
             } else {
