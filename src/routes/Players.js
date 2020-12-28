@@ -76,7 +76,7 @@ router.post('/adquired_subattribute/', (req,res,next)=>{
     var insertInto = 'INSERT INTO `adquired_subattribute` (`id_players`,`id_subattributes_conversion_sensor_endpoint`,`data`,`created_time`) VALUES'
     var values = '(?,?,?,?,?,'+ '\''+date +'\''+')'
     var query = insertInto+values
-    for(let i = 0; i< id_conversions.length; i++){
+    for(let i = 0; i< id_subattributes_conversion_sensor_endpoint.length; i++){
         mysqlConnection.query(query,[id_player,id_subattributes_conversion_sensor_endpoint[i], new_data[i]], function(err2,rows2,fields2){
             if (!err2){
                 
