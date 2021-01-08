@@ -92,7 +92,53 @@ router.post('/adquired_subattribute/', (req,res,next)=>{
   
         
 });
+/*
+Input: 
+  const expended_attribute_final = {
+        "id_player":spend_attributes.id_player,
+        "id_videogame": spend_attributes.id_videogame,
+        "id_modifiable_conversion_attribute":modifiable_conversion_attribute_relation,
+        "new_data":spend_attributes.new_data
+    }
+data = [20,10]
+Description: Simple MYSQL query
+*/
 
+router.post('/spent_attribute/', (req,res,next)=>{
+    var spent_attribute = req.body;
+    var id_player = spent_attribute.id_player
+    var id_videogame = spent_attribute.id_videogame
+
+    var id_modifiable_conversion_attribute_relation = spent_attribute.id_modifiable_conversion_attribute_relation
+    var new_data = spent_attribute.new_data
+
+    console.log('Estos son los attributes:')
+    console.log(spent_attribute)
+    if(!id_player || !id_videogame|| !new_data || !id_modifiable_conversion_attribute_relation){
+        return res.sendStatus(400)
+    }
+    var date = new Date().toISOString().slice(0, 19).replace('T', ' ')
+
+    var insertInto = 'INSERT INTO `expended_attribute` (`id_players`,`id_videogame`,`id_modifiable_conversion_attribute_relation`,`final_cost`,`spent_time`) VALUES'
+    var values = '(?,?,?,?,'+ '\''+date +'\''+')'
+    var query = insertInto+values
+
+    console.log('Este es el query original')
+    console.log(query)
+    mysqlConnection.query(query,[id_player,id_videgoame,id_modifiable_conversion_attribute_relation,new_data], function(err2,rows2,fields2){
+        if (!err2){
+            
+            res.status(200).json('Success');
+
+            
+        } else {
+            res.status(400).json('Failure');
+
+        }
+    });
+    
+        
+});
 /*
 Input: 
 var dataChanges ={  
@@ -132,6 +178,50 @@ router.put('/player_attributes',(req,res)=>{
     console.log('Antes del succes');
     res.json('Success');
 })
+
+/*
+Input: 
+var dataChanges ={  
+        "id_player":  1
+        "id_attributes": 3
+        "new_data": 4
+    }
+data = [20,10]
+Description: Simple MYSQL query
+*/
+router.put('/player_attributes_single',(req,res)=>{
+    console.log(req.body)
+    let id_player = req.body.id_player;
+    let id_attributes = req.body.id_attributes;
+    let new_data = req.body.new_data
+
+    let date = new Date().toISOString().slice(0, 19).replace('T', ' ')
+
+    let update = 'UPDATE `playerss_attributes` '
+    let set = ' SET `data` = ?,`last_modified` = ' + '\''+date+'\'' 
+    let where = ' WHERE `playerss_attributes`.`id_playerss` = ? '
+    let and = 'AND `playerss_attributes`.`id_attributes` = ? '
+    let query = update+set+where+and
+    console.log(id_player)
+    console.log(id_attributes)
+    console.log(new_data)
+
+    console.log(query)
+    mysqlConnection.query(query,[new_data, id_player,id_attributes], function(err2,rows2,fields2){
+        if (!err2){
+                    
+            console.log('Antes del succes');
+            res.status(200).json('Success');
+        } else {
+            res.status(400).json('Failure');
+
+
+        }
+    });
+    
+})
+
+
 
 
 
