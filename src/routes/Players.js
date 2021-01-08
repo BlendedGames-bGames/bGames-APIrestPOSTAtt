@@ -88,7 +88,7 @@ router.post('/adquired_subattribute/', (req,res,next)=>{
         });
     }
     console.log('Antes del succes');
-    res.json('Success');
+    res.status(200).json('Success');
   
         
 });
@@ -125,17 +125,20 @@ router.post('/spent_attribute/', (req,res,next)=>{
 
     console.log('Este es el query original')
     console.log(query)
-    mysqlConnection.query(query,[id_player,id_videogame,id_modifiable_conversion_attribute,new_data], function(err2,rows2,fields2){
-        if (!err2){
-            
-            res.status(200).json('Success');
+    for(let i = 0; i< id_modifiable_conversion_attribute.length; i++){
 
-            
-        } else {
-            res.status(400).json('Failure');
+        mysqlConnection.query(query,[id_player,id_videogame,id_modifiable_conversion_attribute[i],new_data[i]], function(err2,rows2,fields2){
+            if (!err2){
+                
+            } else {
+    
+            }
+        });
 
-        }
-    });
+
+    }    
+    console.log('Antes del succes');
+    res.status(200).json('Success');
     
         
 });
