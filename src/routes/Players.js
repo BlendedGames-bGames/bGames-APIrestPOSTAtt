@@ -109,23 +109,23 @@ router.post('/spent_attribute/', (req,res,next)=>{
     var id_player = spent_attribute.id_player
     var id_videogame = spent_attribute.id_videogame
 
-    var id_modifiable_conversion_attribute_relation = spent_attribute.id_modifiable_conversion_attribute_relation
+    var id_modifiable_conversion_attribute = spent_attribute.id_modifiable_conversion_attribute
     var new_data = spent_attribute.new_data
 
     console.log('Estos son los attributes:')
     console.log(spent_attribute)
-    if(!id_player || !id_videogame|| !new_data || !id_modifiable_conversion_attribute_relation){
+    if(!id_player || !id_videogame|| !new_data || !id_modifiable_conversion_attribute){
         return res.sendStatus(400)
     }
     var date = new Date().toISOString().slice(0, 19).replace('T', ' ')
 
-    var insertInto = 'INSERT INTO `expended_attribute` (`id_players`,`id_videogame`,`id_modifiable_conversion_attribute_relation`,`final_cost`,`spent_time`) VALUES'
+    var insertInto = 'INSERT INTO `expended_attribute` (`id_players`,`id_videogame`,`id_modifiable_conversion_attribute`,`final_cost`,`spent_time`) VALUES'
     var values = '(?,?,?,?,'+ '\''+date +'\''+')'
     var query = insertInto+values
 
     console.log('Este es el query original')
     console.log(query)
-    mysqlConnection.query(query,[id_player,id_videgoame,id_modifiable_conversion_attribute_relation,new_data], function(err2,rows2,fields2){
+    mysqlConnection.query(query,[id_player,id_videgoame,id_modifiable_conversion_attribute,new_data], function(err2,rows2,fields2){
         if (!err2){
             
             res.status(200).json('Success');
