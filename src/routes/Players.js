@@ -125,7 +125,7 @@ router.post('/spent_attribute/', (req,res,next)=>{
 
     console.log('Este es el query original')
     console.log(query)
-    mysqlConnection.query(query,[id_player,id_videgoame,id_modifiable_conversion_attribute,new_data], function(err2,rows2,fields2){
+    mysqlConnection.query(query,[id_player,id_videogame,id_modifiable_conversion_attribute,new_data], function(err2,rows2,fields2){
         if (!err2){
             
             res.status(200).json('Success');
