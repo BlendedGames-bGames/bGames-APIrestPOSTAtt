@@ -83,11 +83,11 @@ app.put('/player_attributes',(req,res)=>{
             connection.query(query,[new_data[i], id_player,id_attributes[i]],function(err,rows){
                 connection.release();
                 if(!err) {
-                    io.emit('player_attribute', [new_data[i],id_attributes[i]])                
+                    io.emit('player_attribute', {data: new_data[i],attributes: id_attributes[i]})                
                 }
             });
             connection.on('error', function(err) {
-                    io.emit('player_attribute_error', [new_data[i],id_attributes[i]])          
+                    io.emit('player_attribute_error', {data: new_data[i],attributes: id_attributes[i]})          
                     return;
             });
 
