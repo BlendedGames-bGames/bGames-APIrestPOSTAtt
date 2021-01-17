@@ -13,11 +13,8 @@ app.use(express.json());
 app.use(require('./routes/Initial_Requests'))
 
 //Starting the server
-app.listen(port, () => {
+const server = app.listen(port, () => {
  console.log(`listening on port ${port} ...... `);
 });
 
-var http      =     require('http').Server(app);
-var io        =     require("socket.io")(http);
-
-module.exports = io;
+module.exports = server;
