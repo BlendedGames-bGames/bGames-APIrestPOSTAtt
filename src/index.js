@@ -7,6 +7,7 @@ const io = require("socket.io")(http, {
       methods: ["GET", "POST"]
     }
 });
+const router = express.Router();
 
 var bodyParse =require('body-parser');
 app.use(bodyParse.json());
