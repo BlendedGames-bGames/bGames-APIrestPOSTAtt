@@ -9,12 +9,12 @@ const port = process.env.PORT || 3002;
 //Middlewares
 app.use(express.json());
 
-//Routes
-app.use(require('./routes/Initial_Requests'))
-
 //Starting the server
 const server = app.listen(port, () => {
  console.log(`listening on port ${port} ...... `);
 });
+
+//Routes
+app.use(require('./routes/Initial_Requests'))
 
 module.exports = server;
