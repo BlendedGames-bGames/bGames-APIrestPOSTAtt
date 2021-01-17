@@ -19,10 +19,6 @@ const port = process.env.PORT || 3002;
 app.use(express.json());
 
 
-
-//Routes
-app.use(require('./routes/Initial_Requests'))
-
 let users = [];
 let messages = [];
 let index = 0
@@ -60,7 +56,7 @@ io.on("connection", socket => {
 		users.splice(users.indexOf(socket), 1);
 	});
 });
-router.put('/player_attributes',(req,res)=>{
+app.put('/player_attributes',(req,res)=>{
     console.log(req.body)
     let id_player = req.body.id_player;
     let id_attributes = req.body.id_attributes;
