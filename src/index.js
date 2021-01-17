@@ -8,7 +8,7 @@ const io = require("socket.io")(http, {
     }
 });
 const router = express.Router();
-
+const {pool} = require('./database');
 var bodyParse =require('body-parser');
 app.use(bodyParse.json());
 app.use(bodyParse.urlencoded({extended:true}));
