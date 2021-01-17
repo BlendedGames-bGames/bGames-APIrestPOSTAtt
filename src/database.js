@@ -6,7 +6,14 @@ const mysqlConnection = mysql.createConnection({
     database: 'testbg',
     multipleStatements:true
 })
-
+var pool    =    mysql.createPool({
+    connectionLimit   :   100,
+    host              :   'db4free.net',
+    user              :   'grybyus',
+    password          :   'interaction1',
+    database          :   'testbg',
+    debug             :   false
+});
 
 mysqlConnection.connect(function(err){
     if(!!err){
@@ -17,4 +24,4 @@ mysqlConnection.connect(function(err){
     }
 });
 
-module.exports = mysqlConnection;
+module.exports = {mysqlConnection, pool};

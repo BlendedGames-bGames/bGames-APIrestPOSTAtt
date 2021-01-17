@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-var http = require('http');
-const mysqlConnection = require('../database');
+const {mysqlConnection} = require('../database');
+const {pool} = require('../database');
+const {io} = require('../database');
 
 // PARA ESTE MICROSERVICIO SE NECESITA INGRESAR LOS DATOS DE LA SIGUIENTE MANERA:
 /* Ejemplo de Json del Body para el POST
@@ -17,37 +18,11 @@ const mysqlConnection = require('../database');
     }
 */
 
-/*
-Input: Name, pass and age of that player
-Output: Void (Edits an existing player in the db)
-Description: Simple MYSQL query
-*/
-//Con id en 0 se ingresa un nuevo jugador, con cualquier otro id se edita el existente
-router.put('/attributes/bycategory/:id/:type',(req,res)=>{
-    console.log("entro en el PUT");
-    var post_data = req.body;
-    if(!req.body.id_player || !req.body.data){
-        return res.sendStatus(400).json({
-            error: 'Missing data'
-          })
-    }
-    console.log(post_data);
-    var id_player = Number(post_data.id_player);
-    var namecategory = post_data.namecategory;
-    var data = Number(post_data.data);
-    const query = 'UPDATE attributes SET data = ? WHERE attributes.name = ? AND attributes.players_id_players = ?'       
-    mysqlConnection.query(query,[data,namecategory,id_player],(err,rows,fields) =>{
-        if(!err){
-            res.json({Status:'Player s attribute update SUCCESSFUL'});
-            console.log("Lo logró");
-            
-        } else {
-            res.json({Status:'ERROR: Attribute Update'});
-            console.log(err);
-        }
-    })
 
-})
+io.on('connection',function(socket){  
+    console.log("A user is connected");
+});
+
 
 
 /*
@@ -170,16 +145,30 @@ router.put('/player_attributes',(req,res)=>{
     console.log(new_data)
 
     console.log(query)
-    for(let i = 0; i< id_attributes.length; i++){
-        mysqlConnection.query(query,[new_data[i], id_player,id_attributes[i]], function(err2,rows2,fields2){
-            if (!err2){
-                
-            } else {
-            }
-        });
-    }
-    console.log('Antes del succes');
-    res.json('Success');
+    pool.getConnection(function(err,connection){
+        if (err) {
+          callback(false);
+          return;
+        }
+        for(let i = 0; i< id_attributes.length; i++){
+            connection.query(query,[new_data[i], id_player,id_attributes[i]],function(err,rows){
+                connection.release();
+                if(!err) {
+                    io.emit('player_attribute', [new_data[i],id_attributes[i]])                
+                }
+            });
+            connection.on('error', function(err) {
+                    io.emit('player_attribute_error', [new_data[i],id_attributes[i]])          
+                    return;
+            });
+
+
+        }
+        
+        console.log('Antes del succes');
+        res.json('Success');
+       
+    });
 })
 
 /*

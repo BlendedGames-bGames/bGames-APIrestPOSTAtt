@@ -10,9 +10,14 @@ const port = process.env.PORT || 3002;
 app.use(express.json());
 
 //Routes
-app.use(require('./routes/Players'))
+app.use(require('./routes/Initial_Requests'))
 
 //Starting the server
 app.listen(port, () => {
  console.log(`listening on port ${port} ...... `);
 });
+
+var http      =     require('http').Server(app);
+var io        =     require("socket.io")(http);
+
+module.exports = io;
