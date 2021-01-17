@@ -3,19 +3,8 @@ const router = express.Router();
 
 const {mysqlConnection} = require('../database');
 const {pool} = require('../database');
-const {server} = require('../index');
 
-const io = require('socket.io')(server, {
-    cors: {
-      origin: 'http://172.31.37.79:8080',
-      methods: ["GET", "POST"]
 
-    }
-});
-
-let users = [];
-let messages = [];
-let index = 0
 // PARA ESTE MICROSERVICIO SE NECESITA INGRESAR LOS DATOS DE LA SIGUIENTE MANERA:
 /* Ejemplo de Json del Body para el POST
     {
@@ -28,41 +17,6 @@ let index = 0
     "date_time": "2019-05-16 13:17:17"
     }
 */
-io.on("connection", socket => {
-	socket.emit('loggedIn', {
-		users: users.map(s => s.username),
-		messages: messages
-	});
-
-	socket.on('newuser', username => {
-		console.log(`${username} has arrived at the party.`);
-		socket.username = username;
-		
-		users.push(socket);
-
-		io.emit('userOnline', socket.username);
-	});
-
-	socket.on('msg', msg => {
-		let message = {
-			username: socket.username,
-            msg: msg,
-            index:index
-        }
-        messages.push(message);
-
-        io.emit('msg', message);
-        index++
-	});
-	
-	// Disconnect
-	socket.on("disconnect", () => {
-		console.log(`${socket.username} has left the party.`);
-		io.emit("userLeft", socket.username);
-		users.splice(users.indexOf(socket), 1);
-	});
-});
-
 
 
 /*
