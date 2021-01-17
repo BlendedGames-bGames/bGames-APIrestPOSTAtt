@@ -81,7 +81,6 @@ app.put('/player_attributes',(req,res)=>{
         }
         for(let i = 0; i< id_attributes.length; i++){
             connection.query(query,[new_data[i], id_player,id_attributes[i]],function(err,rows){
-                connection.release();
                 if(!err) {
                     io.emit('player_attribute', {data: new_data[i],attributes: id_attributes[i]})                
                 }
@@ -93,6 +92,8 @@ app.put('/player_attributes',(req,res)=>{
 
 
         }
+        connection.release();
+
         
         console.log('Antes del succes');
         res.json('Success');
