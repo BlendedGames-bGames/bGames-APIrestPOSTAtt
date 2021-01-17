@@ -7,7 +7,9 @@ const {server} = require('../index');
 
 const io = require('socket.io')(server, {
     cors: {
-      origin: '*',
+      origin: 'http://172.31.37.79:8080',
+      methods: ["GET", "POST"]
+
     }
 });
 
