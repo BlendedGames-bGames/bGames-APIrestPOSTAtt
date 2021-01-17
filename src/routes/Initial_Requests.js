@@ -3,7 +3,7 @@ const router = express.Router();
 
 const {mysqlConnection} = require('../database');
 const {pool} = require('../database');
-const {io} = require('../database');
+const {io} = require('../index');
 
 // PARA ESTE MICROSERVICIO SE NECESITA INGRESAR LOS DATOS DE LA SIGUIENTE MANERA:
 /* Ejemplo de Json del Body para el POST
