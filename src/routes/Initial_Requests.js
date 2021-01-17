@@ -4,6 +4,7 @@ const router = express.Router();
 const {mysqlConnection} = require('../database');
 const {pool} = require('../database');
 const {server} = require('../index');
+const socket = require("socket.io");
 
 const io = socket(server)
 
