@@ -121,49 +121,6 @@ var dataChanges ={
 data = [20,10]
 Description: Simple MYSQL query
 */
-router.put('/player_attributes',(req,res)=>{
-    console.log(req.body)
-    let id_player = req.body.id_player;
-    let id_attributes = req.body.id_attributes;
-    let new_data = req.body.new_data
-
-    let date = new Date().toISOString().slice(0, 19).replace('T', ' ')
-
-    let update = 'UPDATE `playerss_attributes` '
-    let set = ' SET `data` = ?,`last_modified` = ' + '\''+date+'\'' 
-    let where = ' WHERE `playerss_attributes`.`id_playerss` = ? '
-    let and = 'AND `playerss_attributes`.`id_attributes` = ? '
-    let query = update+set+where+and
-    console.log(id_player)
-    console.log(id_attributes)
-    console.log(new_data)
-
-    console.log(query)
-    pool.getConnection(function(err,connection){
-        if (err) {
-          callback(false);
-          return;
-        }
-        for(let i = 0; i< id_attributes.length; i++){
-            connection.query(query,[new_data[i], id_player,id_attributes[i]],function(err,rows){
-                connection.release();
-                if(!err) {
-                    io.emit('player_attribute', [new_data[i],id_attributes[i]])                
-                }
-            });
-            connection.on('error', function(err) {
-                    io.emit('player_attribute_error', [new_data[i],id_attributes[i]])          
-                    return;
-            });
-
-
-        }
-        
-        console.log('Antes del succes');
-        res.json('Success');
-       
-    });
-})
 
 /*
 Input: 
