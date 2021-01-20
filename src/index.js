@@ -56,6 +56,13 @@ io.on("connection", socket => {
 		users.splice(users.indexOf(socket), 1);
 	});
 });
+
+
+app.get("/", (req,res) =>{
+    var variable = req.body
+    res.status(200).json(variable)
+
+});
 app.put('/player_attributes',(req,res)=>{
     console.log(req.body)
     let id_player = req.body.id_player;
