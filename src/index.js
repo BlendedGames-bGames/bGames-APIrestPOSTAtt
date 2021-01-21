@@ -8,7 +8,7 @@ const io = require("socket.io")(http, {
     }
 });
 const router = express.Router();
-const {pool} = require('./database');
+const {mysqlConnection} = require('./database');
 var bodyParse =require('body-parser');
 app.use(bodyParse.json());
 app.use(bodyParse.urlencoded({extended:true}));
@@ -81,7 +81,7 @@ app.put('/player_attributes',(req,res)=>{
     console.log(new_data)
 
     console.log(query)
-    pool.getConnection(function(err,connection){
+    mysqlConnection.getConnection(function(err,connection){
         if (err) {
           callback(false);
           return;

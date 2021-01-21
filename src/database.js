@@ -1,27 +1,16 @@
 const mysql = require('mysql');
-const mysqlConnection = mysql.createConnection({
+var mysqlConnection  = mysql.createPool({
+    connectionLimit : 100,
     host:'db4free.net',
     user:'grybyus',
     password:'interaction1',
     database: 'testbg',
     multipleStatements:true
-})
-var pool    =    mysql.createPool({
-    connectionLimit   :   100,
-    host              :   'db4free.net',
-    user              :   'grybyus',
-    password          :   'interaction1',
-    database          :   'testbg',
-    debug             :   false
 });
+  
+  pool.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
+    if (error) throw error;
+    console.log('The solution is: ', results[0].solution);
+  });
 
-mysqlConnection.connect(function(err){
-    if(!!err){
-        console.log(err);
-        return;
-    } else{
-        console.log('Db is connectedddd');
-    }
-});
-
-module.exports = {mysqlConnection, pool};
+module.exports = {mysqlConnection};

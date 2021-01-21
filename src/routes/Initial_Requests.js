@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 
 const {mysqlConnection} = require('../database');
-const {pool} = require('../database');
 
 
 // PARA ESTE MICROSERVICIO SE NECESITA INGRESAR LOS DATOS DE LA SIGUIENTE MANERA:
