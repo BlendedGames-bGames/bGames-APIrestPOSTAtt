@@ -1,5 +1,6 @@
 const express = require('express');
-const router = express.Router();
+const initial_attributes = express.Router();
+import { testEnvironmentVariable } from '../settings';
 
 const {mysqlConnection} = require('../database');
 
@@ -17,6 +18,11 @@ const {mysqlConnection} = require('../database');
     }
 */
 
+initial_attributes.get("/", (req,res) =>{
+    res.status(200).json({ message: testEnvironmentVariable})
+
+
+});
 
 /*
 var adquired_subattributes ={  
@@ -28,7 +34,7 @@ var adquired_subattributes ={
     }
 */
 
-router.post('/adquired_subattribute/', (req,res,next)=>{
+initial_attributes.post('/adquired_subattribute/', (req,res,next)=>{
     var adquired_subattribute = req.body;
     var id_player = adquired_subattribute.id_player
     var id_subattributes_conversion_sensor_endpoint = adquired_subattribute.id_subattributes_conversion_sensor_endpoint
@@ -72,7 +78,7 @@ data = [20,10]
 Description: Simple MYSQL query
 */
 
-router.post('/spent_attribute/', (req,res,next)=>{
+initial_attributes.post('/spent_attribute/', (req,res,next)=>{
     var spent_attribute = req.body;
     var id_player = spent_attribute.id_player
     var id_videogame = spent_attribute.id_videogame
@@ -121,6 +127,49 @@ data = [20,10]
 Description: Simple MYSQL query
 */
 
+initial_attributes.put('/player_attributes',(req,res)=>{
+    console.log(req.body)
+    let id_player = req.body.id_player;
+    let id_attributes = req.body.id_attributes;
+    let new_data = req.body.new_data
+
+    let date = new Date().toISOString().slice(0, 19).replace('T', ' ')
+
+    let update = 'UPDATE `playerss_attributes` '
+    let set = ' SET `data` = ?,`last_modified` = ' + '\''+date+'\'' 
+    let where = ' WHERE `playerss_attributes`.`id_playerss` = ? '
+    let and = 'AND `playerss_attributes`.`id_attributes` = ? '
+    let query = update+set+where+and
+    console.log(id_player)
+    console.log(id_attributes)
+    console.log(new_data)
+
+    console.log(query)
+    mysqlConnection.getConnection(function(err,connection){
+        if (err) {
+          callback(false);
+          return;
+        }
+        for(let i = 0; i< id_attributes.length; i++){
+            connection.query(query,[new_data[i], id_player,id_attributes[i]],function(err,rows){
+                if(!err) {
+                }
+            });
+            connection.on('error', function(err) {
+                res.status(200).json('player_attribute_error', {data: new_data[i],attributes: id_attributes[i]})          
+                return;
+            });
+
+
+        }
+        connection.release();
+
+        
+        console.log('Antes del succes');
+        res.status(200).json('Success');
+       
+    });
+})
 /*
 Input: 
 var dataChanges ={  
@@ -131,7 +180,7 @@ var dataChanges ={
 data = [20,10]
 Description: Simple MYSQL query
 */
-router.put('/player_attributes_single',(req,res)=>{
+initial_attributes.put('/player_attributes_single',(req,res)=>{
     console.log(req.body)
     let id_player = req.body.id_player;
     let id_attributes = req.body.id_attributes;
@@ -172,7 +221,7 @@ Input: Json of sensor data
 Output: Void (Just stores the json in the database)
 Description: Simple MYSQL query
 */
-router.post('/attributes/', (req,res,next)=>{
+initial_attributes.post('/attributes/', (req,res,next)=>{
     console.log("asdasdasdasdasdsa");
     var post_data = req.body;
     console.log(post_data);
@@ -221,6 +270,5 @@ router.post('/attributes/', (req,res,next)=>{
 
 })
 
-module.exports = router;
+export default initial_attributes;
 
-// A TODOS LOS JUGADORES QUE SE AGREGUEN A LA TABLA JUGADORES, DEBE AGREGARSE TODOS LOS ATRIBUTOS POSIBLES QUE ESTEN EN LA LISTA DE ATRIBUTOS INICIALIZADOS EN 0
