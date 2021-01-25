@@ -49,7 +49,7 @@ module.exports = (io) => {
     // put any other code that wants to use the io variable
     // in here
 
-    real_time_attributes.put('/player_attributes',(req,res)=>{
+    real_time_attributes.put('/player_attributes_rt',(req,res)=>{
         console.log(req.body)
         let id_player = req.body.id_player;
         let id_attributes = req.body.id_attributes;
