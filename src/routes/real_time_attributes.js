@@ -48,10 +48,6 @@ real_time_attributes.put('/player_attributes_rt',(req,res)=>{
 
 
         }
-        while(complete_index !== 0){
-            console.log('Waiting for completing');
-
-        }
         var results = []
         for(let i = 0; i< id_attributes.length; i++){ 
 
