@@ -104,4 +104,5 @@ module.exports = (io) => {
 
 };
 
+export default real_time_attributes;
 
