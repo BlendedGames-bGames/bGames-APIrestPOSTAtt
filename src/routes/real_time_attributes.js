@@ -50,8 +50,8 @@ module.exports = (io) => {
     // in here
 
     real_time_attributes.put('/player_attributes_rt',(req,res)=>{
-        console.log(req.body)
-        let id_player = req.body.id_player;
+        console.log('paso por aqui')
+        /*let id_player = req.body.id_player;
         let id_attributes = req.body.id_attributes;
         let new_data = req.body.new_data
     
@@ -101,7 +101,7 @@ module.exports = (io) => {
             res.status(200).json({message:'Success'});            
             connection.release();
 
-        });
+        });*/
     })
 
 };
