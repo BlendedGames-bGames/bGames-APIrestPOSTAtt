@@ -70,10 +70,12 @@ module.exports = (io) => {
         mysqlConnection.getConnection(function(err,connection){
             var complete_index = id_attributes.length
             if (err) {
-              callback(false);
-              return;
+                res.status(400).json({message:'No se pudo tener una coneccion, tratar nuevamente'});            
+                callback(false);
+                return;
             }
             for(let i = 0; i< id_attributes.length; i++){
+                console.log(complete_index)
                 connection.query(query,[new_data[i], id_player,id_attributes[i]],function(err,rows){
                     if(!err) {
                         complete_index--
