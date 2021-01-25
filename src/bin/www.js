@@ -80,5 +80,4 @@ const io = require("socket.io")(server, {
     methods: ["GET", "POST"]
   }
 });
-
-require('../routes/real_time_attributes.js')(io);
+app.locals.io = io

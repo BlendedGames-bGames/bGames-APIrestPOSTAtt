@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 
 //Routes
 import initial_attributes from './routes/initial_attributes';
+
 import real_time_attributes from './routes/real_time_attributes';
 
 const app = express();
