@@ -68,6 +68,7 @@ module.exports = (io) => {
     
         console.log(query)
         mysqlConnection.getConnection(function(err,connection){
+            var complete_index = id_attributes.length
             if (err) {
               callback(false);
               return;
@@ -75,22 +76,29 @@ module.exports = (io) => {
             for(let i = 0; i< id_attributes.length; i++){
                 connection.query(query,[new_data[i], id_player,id_attributes[i]],function(err,rows){
                     if(!err) {
-                        io.emit('player_attribute', {data: new_data[i],attributes: id_attributes[i]})                
+                        complete_index--
                     }
                 });
                 connection.on('error', function(err) {
-                        io.emit('player_attribute_error', {data: new_data[i],attributes: id_attributes[i]})          
-                        return;
+                    res.status(400).json({message:'Error in updating attributes'});
+                    return;
                 });
     
     
             }
+            while(complete_index !== 0){
+                console.log('Waiting for completing');
+
+            }
+            var results = []
+            for(let i = 0; i< id_attributes.length; i++){ 
+
+                results.push([new_data[i],id_attributes[i] ])
+            }
+            io.emit('player_attribute', results)
+            res.status(200).json({message:'Success'});            
             connection.release();
-    
-            
-            console.log('Antes del succes');
-            res.status(200).json({message:'Success'});
-           
+
         });
     })
 
