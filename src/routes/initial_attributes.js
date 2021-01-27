@@ -53,17 +53,31 @@ initial_attributes.post('/adquired_subattribute/', (req,res,next)=>{
 
     console.log('Este es el query original')
     console.log(query)
-    for(let i = 0; i< id_subattributes_conversion_sensor_endpoint.length; i++){
-        mysqlConnection.query(query,[id_player,id_subattributes_conversion_sensor_endpoint[i], new_data[i]], function(err2,rows2,fields2){
-            if (!err2){
-                
-            } else {
-            }
-        });
-    }
-    console.log('Antes del succes');
-    res.status(200).json('Success');
-  
+    mysqlConnection.getConnection(function(err,connection){
+        if (err) {
+          callback(false);
+          return;
+        }
+        for(let i = 0; i< id_subattributes_conversion_sensor_endpoint.length; i++){
+            connection.query(query,[id_player,id_subattributes_conversion_sensor_endpoint[i], new_data[i]], function(err,rows,fields){
+                if(!err) {
+                }
+            });
+            connection.on('error', function(err) {
+                res.status(400).json('adquired_subattribute error', {data: new_data[i],attributes: id_attributes[i]})          
+                connection.release();
+                return;
+            });
+
+
+        }
+        connection.release();
+
+        
+        console.log('Antes del succes');
+        res.status(200).json('Success');
+       
+    });   
         
 });
 /*
@@ -99,21 +113,31 @@ initial_attributes.post('/spent_attribute/', (req,res,next)=>{
 
     console.log('Este es el query original')
     console.log(query)
-    for(let i = 0; i< id_modifiable_conversion_attribute.length; i++){
+    mysqlConnection.getConnection(function(err,connection){
+        if (err) {
+          callback(false);
+          return;
+        }
+        for(let i = 0; i< id_modifiable_conversion_attribute.length; i++){
+            connection.query(query,[id_player,id_videogame,id_modifiable_conversion_attribute[i],new_data[i]], function(err,rows,fields){
+                if(!err) {
+                }
+            });
+            connection.on('error', function(err) {
+                res.status(400).json('spent_attribute error', {data: new_data[i],attributes: id_attributes[i]})    
+                connection.release();
+                return
+            });
 
-        mysqlConnection.query(query,[id_player,id_videogame,id_modifiable_conversion_attribute[i],new_data[i]], function(err2,rows2,fields2){
-            if (!err2){
-                
-            } else {
-    
-            }
-        });
 
+        }
+        connection.release();
 
-    }    
-    console.log('Antes del succes');
-    res.status(200).json('Success');
-    
+        
+        console.log('Antes del succes');
+        res.status(200).json('Success');
+       
+    });   
         
 });
 /*
@@ -156,8 +180,9 @@ initial_attributes.put('/player_attributes',(req,res)=>{
                 }
             });
             connection.on('error', function(err) {
-                res.status(200).json('player_attribute_error', {data: new_data[i],attributes: id_attributes[i]})          
-                return;
+                res.status(400).json('player_attribute_error', {data: new_data[i],attributes: id_attributes[i]})   
+                connection.release();
+                return
             });
 
 
@@ -198,17 +223,25 @@ initial_attributes.put('/player_attributes_single',(req,res)=>{
     console.log(new_data)
 
     console.log(query)
-    mysqlConnection.query(query,[new_data, id_player,id_attributes], function(err2,rows2,fields2){
-        if (!err2){
-                    
-            console.log('Antes del succes');
-            res.status(200).json('Success');
-        } else {
-            res.status(400).json('Failure');
+    mysqlConnection.getConnection(function(err, connection) {
+        if (err){
+            res.status(400).json({message:'No se pudo obtener una conexion para realizar la consulta en la base de datos, consulte nuevamente', error: err})
+            throw err
+        } 
+        connection.query(query,[new_data, id_player,id_attributes], function(err,rows,fields){
+            if (!err){
+                console.log(rows);
+                res.status(200).json(rows)
+                
+            } else {
+                console.log(err);
+                res.status(400).json({message:'No se pudo consultar a la base de datos', error: err})
+            }
+            connection.release();
 
+        });
+    })
 
-        }
-    });
     
 })
 
