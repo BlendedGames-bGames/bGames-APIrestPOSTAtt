@@ -25,14 +25,52 @@ initial_attributes.get("/", (req,res) =>{
 });
 
 /*
-var adquired_subattributes ={  
-        "id_player": id_player,        Ej: 1
-        "id_sensor_endpoint": id_sensor_endpoint, Ej: 1
-        "id_conversion": id_conversions,   Ej [3,4]
-        "id_subattributes":id_subattributes, Ej [5,5]
-        "new_data": results, Ej [4,5] Son puntos
-    }
+POST: Crea las tablas iniciales intermedias para poder poner los niveles de las dimensiones
 */
+initial_attributes.post('/player_all_attributes/:id_player', (req,res,next)=>{
+   
+    var id_player = req.params.id_player
+    var id_attributes = req.body.id_attributes
+
+    if(!id_player || !id_attributes){
+        return res.sendStatus(400)
+    }
+    var date = new Date().toISOString().slice(0, 19).replace('T', ' ')
+
+    var insertInto = 'INSERT INTO `playerss_attributes`  '
+    var columns = '(`id_playerss`,`id_attributes`,`data`,`last_modified`) '
+    var values = 'VALUES (?,?,?,'+ '\''+date +'\''+')'
+    var query = insertInto+columns+values
+
+    console.log('Este es el query original')
+    console.log(query)
+    mysqlConnection.getConnection(function(err,connection){
+        if (err) {
+          callback(false);
+          return;
+        }
+        for(let i = 0; i< id_attributes.length; i++){
+            connection.query(query,[id_player,id_attributes[i],0], function(err,rows,fields){
+                if(!err) {
+                }
+            });
+            connection.on('error', function(err) {
+                res.status(400).json('Insert error', {id_player: id_player,attributes: id_attributes[i]})    
+                connection.release();
+                return
+            });
+
+
+        }
+        connection.release();
+
+        
+        console.log('Antes del succes');
+        res.status(200).json('Success');
+       
+    });   
+        
+});
 
 initial_attributes.post('/adquired_subattribute/', (req,res,next)=>{
     var adquired_subattribute = req.body;
