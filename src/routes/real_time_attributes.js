@@ -54,6 +54,7 @@ real_time_attributes.put('/player_attributes_rt',(req,res)=>{
         }
         connection.release();
         console.log('printing')
+        console.log(results)
         io.emit('player_attribute', results)
         res.status(200).json({message:'Success'});            
 
