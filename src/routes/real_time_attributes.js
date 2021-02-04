@@ -71,9 +71,9 @@ real_time_attributes.put('/player_attributes_rt',(req,res)=>{
             }
             results.push([att,new_data[i]])
         }
+        connection.release();
         io.emit('player_attribute', results)
         res.status(200).json({message:'Success'});            
-        connection.release();
 
     });
 })
