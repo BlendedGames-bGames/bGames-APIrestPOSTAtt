@@ -49,27 +49,8 @@ real_time_attributes.put('/player_attributes_rt',(req,res)=>{
 
         }
         var results = []
-        for(let i = 0; i< id_attributes.length; i++){ 
-            var att;
-            switch (id_attributes[i]) {
-                case 1:
-                    att = 'Cognitivo'
-                    break;
-                case 2:
-                    att = 'Afectivo'
-                    break;
-                case 3:
-                    att = 'Linguistico'
-                    break;
-                case 4:
-                    att = 'Social'
-                    break;
-                case 5:
-                    att = 'Fisico'
-                    break;
-                default:
-            }
-            results.push([att,new_data[i]])
+        for(let i = 0; i< id_attributes.length; i++){             
+            results.push([id_attributes[i],new_data[i]])
         }
         connection.release();
         io.emit('player_attribute', results)
