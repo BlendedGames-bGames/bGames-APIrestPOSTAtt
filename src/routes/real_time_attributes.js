@@ -48,9 +48,10 @@ real_time_attributes.put('/player_attributes_rt',(req,res)=>{
 
 
         }
-        var results = []
+        var results = {id_attributes: [], data: []}
         for(let i = 0; i< id_attributes.length; i++){             
-            results.push([id_attributes[i],new_data[i]])
+            results.id_attributes.push(id_attributes[i])
+            results.data.push(new_data[i])
         }
         connection.release();
         console.log('printing')
