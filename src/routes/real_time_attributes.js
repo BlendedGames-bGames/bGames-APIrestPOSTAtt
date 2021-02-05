@@ -101,7 +101,6 @@ real_time_attributes.post('/adquired_subattribute_rt', (req,res,next)=>{
 
 
         }
-        connection.release();
         var results = {id_subattributes: [], data: []}
         for(let i = 0; i< id_subattributes.length; i++){             
             results.id_subattributes.push(id_subattributes[i])
