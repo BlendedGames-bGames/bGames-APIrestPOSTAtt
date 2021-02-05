@@ -80,4 +80,15 @@ const io = require("socket.io")(server, {
     methods: ["GET", "POST"]
   }
 });
+io  
+  .of('/dimensions')
+  .on("connection", (socket) => {
+    console.log("New player")
+    socket.emit("welcome", "Bienvenido a dimensiones y subatributos en tiempo real")
+
+    socket.on("joinRoom", (room) => {
+      socket.join(room)
+      return socket.emit("success", "Se a unido a su room personal")
+    })
+  })
 app.locals.io = io
