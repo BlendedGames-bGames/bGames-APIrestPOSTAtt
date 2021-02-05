@@ -62,6 +62,63 @@ real_time_attributes.put('/player_attributes_rt',(req,res)=>{
     });
 })
 
+real_time_attributes.post('/adquired_subattribute_rt', (req,res,next)=>{
+    var adquired_subattribute = req.body;
+    var id_player = adquired_subattribute.id_player
+    var id_subattributes = adquired_subattribute.id_subattributes
+    var id_subattributes_conversion_sensor_endpoint = adquired_subattribute.id_subattributes_conversion_sensor_endpoint
+    var new_data = adquired_subattribute.new_data
+    const io = req.app.locals.io
+
+    console.log('Estos son los attributes:')
+    console.log(adquired_subattribute)
+    if(!id_player || !id_subattributes_conversion_sensor_endpoint|| !new_data){
+        return res.sendStatus(400)
+    }
+    var date = new Date().toISOString().slice(0, 19).replace('T', ' ')
+
+    var insertInto = 'INSERT INTO `adquired_subattribute` (`id_players`,`id_subattributes_conversion_sensor_endpoint`,`data`,`created_time`) VALUES'
+    var values = '(?,?,?,'+ '\''+date +'\''+')'
+    var query = insertInto+values
+
+    console.log('Este es el query original')
+    console.log(query)
+    mysqlConnection.getConnection(function(err,connection){
+        if (err) {
+          callback(false);
+          return;
+        }
+        for(let i = 0; i< id_subattributes_conversion_sensor_endpoint.length; i++){
+            connection.query(query,[id_player,id_subattributes_conversion_sensor_endpoint[i], new_data[i]], function(err,rows,fields){
+                if(!err) {
+                }
+            });
+            connection.on('error', function(err) {
+                res.status(400).json('adquired_subattribute error', {id_player: id_player, data: new_data[i],id_subattributes_conversion_sensor_endpoint: id_subattributes_conversion_sensor_endpoint[i]})          
+                connection.release();
+                return;
+            });
+
+
+        }
+        connection.release();
+        var results = {id_subattributes: [], data: []}
+        for(let i = 0; i< id_subattributes.length; i++){             
+            results.id_subattributes.push(id_subattributes[i])
+            results.data.push(new_data[i])
+        }
+        connection.release();
+        console.log('printing')
+        console.log(results)
+
+        io.of("/dimensions").in(id_player.toString()).emit('player_adquired_subattribute', results)
+        console.log('Antes del succes');
+        res.status(200).json('Success');
+       
+    });   
+        
+});
+
 
 
 export default real_time_attributes;
