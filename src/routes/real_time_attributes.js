@@ -65,6 +65,7 @@ real_time_attributes.put('/player_attributes_rt',(req,res)=>{
 real_time_attributes.post('/adquired_subattribute_rt', (req,res,next)=>{
     var adquired_subattribute = req.body;
     var id_player = adquired_subattribute.id_player
+    var id_sensor_endpoint = adquired_subattribute.id_sensor_endpoint
     var id_subattributes = adquired_subattribute.id_subattributes
     var id_subattributes_conversion_sensor_endpoint = adquired_subattribute.id_subattributes_conversion_sensor_endpoint
     var new_data = adquired_subattribute.new_data
@@ -100,8 +101,8 @@ real_time_attributes.post('/adquired_subattribute_rt', (req,res,next)=>{
             });
 
 
-        }
-        var results = {id_subattributes: [], data: []}
+        }     
+        var results = {id_subattributes: [], data: [], id_sensor_endpoint: new Array(id_subattributes.length).fill(id_sensor_endpoint)}
         for(let i = 0; i< id_subattributes.length; i++){             
             results.id_subattributes.push(id_subattributes[i])
             results.data.push(new_data[i])
