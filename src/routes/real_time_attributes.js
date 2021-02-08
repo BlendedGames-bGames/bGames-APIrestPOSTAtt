@@ -102,10 +102,10 @@ real_time_attributes.post('/adquired_subattribute_rt', (req,res,next)=>{
 
 
         }     
-        var results = {id_subattributes: [], data: [], id_sensor_endpoint: new Array(id_subattributes.length).fill(id_sensor_endpoint), created_time: new Array(id_subattributes.length).fill(date)}
-        for(let i = 0; i< id_subattributes.length; i++){             
-            results.id_subattributes.push(id_subattributes[i])
-            results.data.push(new_data[i])
+        
+        var results = []
+        for(let i = 0; i< id_subattributes.length; i++){          
+            results.push({id_subattributes:id_subattributes[i], data:new_data[i], id_sensor_endpoint:id_sensor_endpoint, created_time:date})
         }
         connection.release();
         console.log('printing')
