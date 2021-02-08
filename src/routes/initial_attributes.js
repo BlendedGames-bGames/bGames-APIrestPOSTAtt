@@ -323,15 +323,15 @@ initial_attributes.post('/attributes/', (req,res,next)=>{
             mysqlConnection.query('INSERT INTO `subattributes` (`nameat`,`namecategory`,`data`,`data_type`,`input_source`,`date_time`,`attributes_id_attributes`)VALUES (?,?,?,?,?,?,?)',[nameat,namecategory,data,data_type,input_source,date_time,attributes_id_attributes], function(err2,rows2,fields2){
                 if (!err2){
                     console.log('Antes del succes');
-                    res.json('Success');
+                    res.status(200).json('Success');
                 } else {
                     console.log(err);
-                    res.json('Error in add')
+                    res.status(400).json('Error in add')
                 }
             });
         } else {
             console.log(err);
-            res.json('The player does not exist');
+            res.status(400).json('The player does not exist');
         }
         
     });
