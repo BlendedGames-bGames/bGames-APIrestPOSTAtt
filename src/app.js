@@ -1,6 +1,7 @@
 import logger from 'morgan';
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import cors from 'cors'
 
 //Routes
 import initial_attributes from './routes/initial_attributes';
@@ -14,6 +15,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(cors())
 
 //Routes
 app.use(initial_attributes);
