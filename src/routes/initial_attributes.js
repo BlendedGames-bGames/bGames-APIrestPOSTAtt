@@ -31,6 +31,10 @@ initial_attributes.post('/player_all_attributes/:id_player', (req,res,next)=>{
    
     var id_player = req.params.id_player
     var id_attributes = req.body.id_attributes
+    console.log(req.params)
+    console.log(req.body)
+    console.log(id_player)
+    console.log(id_attributes)
 
     if(!id_player || !id_attributes){
         return res.sendStatus(400)
