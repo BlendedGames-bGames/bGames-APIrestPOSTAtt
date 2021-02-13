@@ -30,7 +30,7 @@ POST: Crea las tablas iniciales intermedias para poder poner los niveles de las 
 initial_attributes.post('/player_all_attributes/:id_player', (req,res,next)=>{
    
     var id_player = req.params.id_player
-    var id_attributes = req.body.id_attributes
+    var id_attributes = [1,2,3,4,5]
     console.log(req.params)
     console.log(req.body)
     console.log(id_player)
