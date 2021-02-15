@@ -60,7 +60,6 @@ initial_attributes.post('/player_all_attributes/:id_player', (req,res,next)=>{
             });
             connection.on('error', function(err) {
                 res.status(400).json('Insert error', {id_player: id_player,attributes: id_attributes[i]})    
-                connection.release();
                 return
             });
 
