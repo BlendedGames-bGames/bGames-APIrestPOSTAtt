@@ -119,7 +119,7 @@ real_time_attributes.post('/adquired_subattribute_rt', (req,res,next)=>{
         
 });
 
-initial_attributes.post('/spent_attribute_rt', (req,res,next)=>{
+real_time_attributes.post('/spent_attribute_rt', (req,res,next)=>{
 
     var spent_attribute = req.body;
     var id_player = spent_attribute.id_player
