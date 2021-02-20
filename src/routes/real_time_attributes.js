@@ -119,6 +119,62 @@ real_time_attributes.post('/adquired_subattribute_rt', (req,res,next)=>{
         
 });
 
+initial_attributes.post('/spent_attribute_rt', (req,res,next)=>{
+
+    var spent_attribute = req.body;
+    var id_player = spent_attribute.id_player
+    var id_videogame = spent_attribute.id_videogame
+    var id_modifiable_mechanic = spent_attribute.id_modifiable_mechanic
+    var id_attributes = adquired_subattribute.id_attributes
+    var id_modifiable_conversion_attribute = spent_attribute.id_modifiable_conversion_attribute
+    var new_data = spent_attribute.new_data
+
+    console.log('Estos son los attributes:')
+    console.log(spent_attribute)
+    if(!id_player || !id_videogame|| !new_data || !id_modifiable_conversion_attribute){
+        return res.sendStatus(400)
+    }
+    var date = new Date().toISOString().slice(0, 19).replace('T', ' ')
+
+    var insertInto = 'INSERT INTO `expended_attribute` (`id_players`,`id_videogame`,`id_modifiable_conversion_attribute`,`final_cost`,`spent_time`) VALUES'
+    var values = '(?,?,?,?,'+ '\''+date +'\''+')'
+    var query = insertInto+values
+
+    console.log('Este es el query original')
+    console.log(query)
+    mysqlConnection.getConnection(function(err,connection){
+        if (err) {
+          callback(false);
+          return;
+        }
+        for(let i = 0; i< id_modifiable_conversion_attribute.length; i++){
+            connection.query(query,[id_player,id_videogame,id_modifiable_conversion_attribute[i],new_data[i]], function(err,rows,fields){
+                if(!err) {
+                }
+            });
+            connection.on('error', function(err) {
+                res.status(400).json('spent_attribute error', {data: new_data[i],attributes: id_attributes[i]})    
+                connection.release();
+                return
+            });
+
+
+        }
+        var results = []
+        for(let i = 0; i< id_attributes.length; i++){          
+            results.push({id_attributes:id_attributes[i], data:new_data[i], id_videogame:id_videogame, id_modifiable_mechanic:id_modifiable_mechanic, created_time:date})
+        }
+        connection.release();
+        console.log('printing')
+        console.log(results)
+
+        io.of("/dimensions").in(id_player.toString()).emit('player_expended_attribute', results)
+        console.log('Antes del succes');
+        res.status(200).json('Success');
+
+    });   
+        
+});
 
 
 export default real_time_attributes;
