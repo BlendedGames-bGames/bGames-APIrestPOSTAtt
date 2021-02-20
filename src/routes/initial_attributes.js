@@ -148,7 +148,7 @@ initial_attributes.post('/spent_attribute/', (req,res,next)=>{
     }
     var date = new Date().toISOString().slice(0, 19).replace('T', ' ')
 
-    var insertInto = 'INSERT INTO `expended_attribute` (`id_players`,`id_videogame`,`id_modifiable_conversion_attribute`,`final_cost`,`spent_time`) VALUES'
+    var insertInto = 'INSERT INTO `expended_attribute` (`id_players`,`id_videogame`,`id_modifiable_conversion_attribute`,`data`,`created_time`) VALUES'
     var values = '(?,?,?,?,'+ '\''+date +'\''+')'
     var query = insertInto+values
 
