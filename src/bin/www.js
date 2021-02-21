@@ -77,7 +77,7 @@ server.on('listening', onListening);
 const io = require("socket.io")(server, {
   cors: {
     origin: "*",
-    methods: ["GET", "POST"]
+    methods: ["GET", "POST", "PUT"]
   }
 });
 io  
