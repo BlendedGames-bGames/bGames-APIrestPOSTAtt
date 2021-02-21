@@ -43,6 +43,7 @@ real_time_attributes.put('/player_attributes_rt',(req,res)=>{
             });
             connection.on('error', function(err) {
                 res.status(400).json({message:'Error in updating attributes'});
+                connection.release();
                 return;
             });
 
