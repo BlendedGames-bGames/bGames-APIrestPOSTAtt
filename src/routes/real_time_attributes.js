@@ -125,7 +125,7 @@ real_time_attributes.post('/spent_attribute_rt', (req,res,next)=>{
     var id_player = spent_attribute.id_player
     var id_videogame = spent_attribute.id_videogame
     var id_modifiable_mechanic = spent_attribute.id_modifiable_mechanic
-    var id_attributes = adquired_subattribute.id_attributes
+    var id_attributes = spent_attribute.id_attributes
     var id_modifiable_conversion_attribute = spent_attribute.id_modifiable_conversion_attribute
     var new_data = spent_attribute.new_data
 
