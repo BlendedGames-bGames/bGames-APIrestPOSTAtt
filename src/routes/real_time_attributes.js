@@ -44,7 +44,7 @@ real_time_attributes.put('/player_attributes_rt',(req,res)=>{
             connection.on('error', function(err) {
                 res.status(400).json({message:'Error in updating attributes'});
                 connection.release();
-                return;
+                res.end();
             });
 
 
@@ -98,7 +98,7 @@ real_time_attributes.post('/adquired_subattribute_rt', (req,res,next)=>{
             connection.on('error', function(err) {
                 res.status(400).json('adquired_subattribute error', {id_player: id_player, data: new_data[i],id_subattributes_conversion_sensor_endpoint: id_subattributes_conversion_sensor_endpoint[i]})          
                 connection.release();
-                return;
+                res.end();
             });
 
 
@@ -157,7 +157,7 @@ real_time_attributes.post('/spent_attribute_rt', (req,res,next)=>{
             connection.on('error', function(err) {
                 res.status(400).json('spent_attribute error', {data: new_data[i],attributes: id_attributes[i]})    
                 connection.release();
-                return
+                res.end();
             });
 
 
