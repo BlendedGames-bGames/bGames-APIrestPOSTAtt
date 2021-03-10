@@ -90,5 +90,9 @@ io
       socket.join(room)
       return socket.emit("success", "Se a unido a su room personal")
     })
+    socket.on("leaveRoom", (room) => {
+      socket.leave(room)
+      return socket.emit("success", "Se ha salido de su room personal")
+    })
   })
 app.locals.io = io
