@@ -63,120 +63,132 @@ real_time_attributes.put('/player_attributes_rt',(req,res)=>{
     });
 })
 
-real_time_attributes.post('/adquired_subattribute_rt', (req,res,next)=>{
+real_time_attributes.post('/adquired_subattribute_rt', (req, res, next) => {
     var adquired_subattribute = req.body;
-    var id_player = adquired_subattribute.id_player
-    var id_sensor_endpoint = adquired_subattribute.id_sensor_endpoint
-    var id_subattributes = adquired_subattribute.id_subattributes
-    var id_subattributes_conversion_sensor_endpoint = adquired_subattribute.id_subattributes_conversion_sensor_endpoint
-    var new_data = adquired_subattribute.new_data
-    const io = req.app.locals.io
+    var id_player = adquired_subattribute.id_player;
+    var id_sensor_endpoint = adquired_subattribute.id_sensor_endpoint;
+    var id_subattributes = adquired_subattribute.id_subattributes;
+    var id_subattributes_conversion_sensor_endpoint = adquired_subattribute.id_subattributes_conversion_sensor_endpoint;
+    var new_data = adquired_subattribute.new_data;
+    const io = req.app.locals.io;
 
-    console.log('Estos son los attributes:')
-    console.log(adquired_subattribute)
-    if(!id_player || !id_subattributes_conversion_sensor_endpoint|| !new_data){
-        return res.sendStatus(400)
+    console.log('Estos son los attributes:');
+    console.log(adquired_subattribute);
+    if (id_player===undefined || id_subattributes_conversion_sensor_endpoint===undefined || new_data===undefined) {
+        return res.sendStatus(400);
     }
-    var date = new Date().toISOString().slice(0, 19).replace('T', ' ')
 
-    var insertInto = 'INSERT INTO `adquired_subattribute` (`id_players`,`id_subattributes_conversion_sensor_endpoint`,`data`,`created_time`) VALUES'
-    var values = '(?,?,?,'+ '\''+date +'\''+')'
-    var query = insertInto+values
+    var date = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-    console.log('Este es el query original')
-    console.log(query)
-    mysqlConnection.getConnection(function(err,connection){
+    // Utilizando un array para almacenar los valores de las filas a insertar
+    var valuesArray = [];
+
+    for (let i = 0; i < id_subattributes_conversion_sensor_endpoint.length; i++) {
+        valuesArray.push([id_player, id_subattributes_conversion_sensor_endpoint[i], new_data[i], date]);
+    }
+
+    var insertInto = 'INSERT INTO `adquired_subattribute` (`id_players`,`id_subattributes_conversion_sensor_endpoint`,`data`,`created_time`) VALUES ?';
+
+    console.log('Este es el query ajustado:');
+    console.log(insertInto);
+
+    mysqlConnection.getConnection(function (err, connection) {
         if (err) {
-          callback(false);
-          return;
+            callback(false);
+            return;
         }
-        for(let i = 0; i< id_subattributes_conversion_sensor_endpoint.length; i++){
-            connection.query(query,[id_player,id_subattributes_conversion_sensor_endpoint[i], new_data[i]], function(err,rows,fields){
-                if(!err) {
+
+        connection.query(insertInto, [valuesArray], function (err, results, fields) {
+            if (!err) {
+                var results = [];
+                for (let i = 0; i < id_subattributes.length; i++) {
+                    results.push({
+                        id_subattributes: id_subattributes[i],
+                        data: new_data[i],
+                        id_sensor_endpoint: id_sensor_endpoint,
+                        created_time: date
+                    });
                 }
-            });
-            connection.on('error', function(err) {
-                res.status(400).json('adquired_subattribute error', {id_player: id_player, data: new_data[i],id_subattributes_conversion_sensor_endpoint: id_subattributes_conversion_sensor_endpoint[i]})          
                 connection.release();
-                res.end();
-            });
+                console.log('printing');
+                console.log(results);
 
-
-        }     
-        
-        var results = []
-        for(let i = 0; i< id_subattributes.length; i++){          
-            results.push({id_subattributes:id_subattributes[i], data:new_data[i], id_sensor_endpoint:id_sensor_endpoint, created_time:date})
-        }
-        connection.release();
-        console.log('printing')
-        console.log(results)
-
-        io.of("/dimensions").in(id_player.toString()).emit('player_adquired_subattribute', results)
-        console.log('Antes del succes');
-        res.status(200).json('Success');
-       
-    });   
-        
+                io.of("/dimensions").in(id_player.toString()).emit('player_adquired_subattribute', results);
+                console.log('Antes del success');
+                res.status(200).json('Success');
+            } else {
+                console.error('Error al ejecutar la consulta:', err);
+                res.status(500).json('Error al ejecutar la consulta');
+            }
+        });
+    });
 });
 
-real_time_attributes.post('/spent_attribute_rt', (req,res,next)=>{
+
+real_time_attributes.post('/spent_attribute_rt', (req, res, next) => {
     const io = req.app.locals.io
 
     var spent_attribute = req.body;
-    var id_player = spent_attribute.id_player
-    var id_videogame = spent_attribute.id_videogame
-    var id_modifiable_mechanic = spent_attribute.id_modifiable_mechanic
-    var id_attributes = spent_attribute.id_attributes
-    var id_modifiable_conversion_attribute = spent_attribute.id_modifiable_conversion_attribute
-    var new_data = spent_attribute.new_data
+    var id_player = spent_attribute.id_player;
+    var id_videogame = spent_attribute.id_videogame;
+    var id_modifiable_mechanic = spent_attribute.id_modifiable_mechanic;
+    var id_attributes = spent_attribute.id_attributes;
+    var id_modifiable_conversion_attribute = spent_attribute.id_modifiable_conversion_attribute;
+    var new_data = spent_attribute.new_data;
 
     console.log('Estos son los attributes:')
     console.log(spent_attribute)
-    if(!id_player || !id_videogame|| !new_data || !id_modifiable_conversion_attribute){
+    if (id_player===undefined || id_videogame===undefined || new_data===undefined || id_modifiable_conversion_attribute===undefined) {
         return res.sendStatus(400)
     }
-    var date = new Date().toISOString().slice(0, 19).replace('T', ' ')
 
-    var insertInto = 'INSERT INTO `expended_attribute` (`id_players`,`id_videogame`,`id_modifiable_conversion_attribute`,`data`,`created_time`) VALUES'
-    var values = '(?,?,?,?,'+ '\''+date +'\''+')'
-    var query = insertInto+values
+    var date = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-    console.log('Este es el query original')
-    console.log(query)
-    mysqlConnection.getConnection(function(err,connection){
+    // Utilizando un array para almacenar los valores de las filas a insertar
+    var valuesArray = [];
+
+    for (let i = 0; i < id_modifiable_conversion_attribute.length; i++) {
+        valuesArray.push([id_player, id_videogame, id_modifiable_conversion_attribute[i], new_data[i], date]);
+    }
+
+    var insertInto = 'INSERT INTO `expended_attribute` (`id_players`,`id_videogame`,`id_modifiable_conversion_attribute`,`data`,`created_time`) VALUES ?';
+
+    console.log('Este es el query ajustado:')
+    console.log(insertInto);
+
+    mysqlConnection.getConnection(function (err, connection) {
         if (err) {
-          callback(false);
-          return;
+            callback(false);
+            return;
         }
-        for(let i = 0; i< id_modifiable_conversion_attribute.length; i++){
-            connection.query(query,[id_player,id_videogame,id_modifiable_conversion_attribute[i],new_data[i]], function(err,rows,fields){
-                if(!err) {
+
+        connection.query(insertInto, [valuesArray], function (err, results, fields) {
+            if (!err) {
+                var results = []
+                for (let i = 0; i < id_attributes.length; i++) {
+                    results.push({
+                        id_attributes: id_attributes[i],
+                        data: new_data[i],
+                        id_videogame: id_videogame,
+                        id_modifiable_mechanic: id_modifiable_mechanic,
+                        created_time: date
+                    });
                 }
-            });
-            connection.on('error', function(err) {
-                res.status(400).json('spent_attribute error', {data: new_data[i],attributes: id_attributes[i]})    
                 connection.release();
-                res.end();
-            });
+                console.log('printing')
+                console.log(results)
 
-
-        }
-        var results = []
-        for(let i = 0; i< id_attributes.length; i++){          
-            results.push({id_attributes:id_attributes[i], data:new_data[i], id_videogame:id_videogame, id_modifiable_mechanic:id_modifiable_mechanic, created_time:date})
-        }
-        connection.release();
-        console.log('printing')
-        console.log(results)
-
-        io.of("/dimensions").in(id_player.toString()).emit('player_expended_attribute', results)
-        console.log('Antes del succes');
-        res.status(200).json('Success');
-
-    });   
-        
+                io.of("/dimensions").in(id_player.toString()).emit('player_expended_attribute', results)
+                console.log('Antes del succes');
+                res.status(200).json('Success');
+            } else {
+                console.error('Error al ejecutar la consulta:', err);
+                res.status(500).json('Error al ejecutar la consulta');
+            }
+        });
+    });
 });
+
 
 
 export default real_time_attributes;

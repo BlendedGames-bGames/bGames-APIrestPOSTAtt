@@ -2,7 +2,7 @@ const express = require('express');
 const initial_attributes = express.Router();
 import { testEnvironmentVariable } from '../settings';
 
-const mysqlConnection = require('../database');
+const {mysqlConnection} = require('../database');
 
 
 // PARA ESTE MICROSERVICIO SE NECESITA INGRESAR LOS DATOS DE LA SIGUIENTE MANERA:
@@ -20,8 +20,6 @@ const mysqlConnection = require('../database');
 
 initial_attributes.get("/", (req,res) =>{
     res.status(200).json({ message: testEnvironmentVariable})
-
-
 });
 
 /*
@@ -30,7 +28,7 @@ POST: Crea las tablas iniciales intermedias para poder poner los niveles de las 
 initial_attributes.post('/player_all_attributes/:id_player', (req,res,next)=>{
    
     var id_player = req.params.id_player
-    var id_attributes = [1,2,3,4,5]
+    var id_attributes = [0,1,2,3,4]
     console.log(req.params)
     console.log(req.body)
     console.log(id_player)
@@ -42,32 +40,48 @@ initial_attributes.post('/player_all_attributes/:id_player', (req,res,next)=>{
     var date = new Date().toISOString().slice(0, 19).replace('T', ' ')
 
     var insertInto = 'INSERT INTO `playerss_attributes`  '
-    var columns = '(`id_playerss`,`id_attributes`,`data`,`last_modified`) '
-    var values = 'VALUES (?,?,?,'+ '\''+date +'\''+')'
+    var columns = '(`id_playerss_attributes`,`id_playerss`,`id_attributes`,`data`,`last_modified`) '
+    var values = 'VALUES (?,?,?,?,'+ '\''+date +'\''+')'
     var query = insertInto+columns+values
 
     console.log('Este es el query original')
     console.log(query)
+
     mysqlConnection.getConnection(function(err,connection){
         if (err) {
           callback(false);
           return;
         }
-        for(let i = 0; i< id_attributes.length; i++){
-            connection.query(query,[id_player,id_attributes[i],0], function(err,rows,fields){
-                if(!err) {
-                }
-            });
-            connection.on('error', function(err) {
-                res.status(400).json('Insert error', {id_player: id_player,attributes: id_attributes[i]})    
-                return
-            });
 
-
-        }
-        connection.release();
-
+        connection.query('SELECT MAX(id_playerss_attributes) AS last_id FROM playerss_attributes', function (err, rows, fields) {
+            if (!err) {
+                // rows[0].last_id contiene el último ID generado
+                var lastId = rows[0].last_id;
+                lastId+=1;
+    
+                // Puedes usar lastId en tu lógica o pasarlo como respuesta
+                console.log('El último ID generado es:', lastId);
+                for(let i = 0; i< id_attributes.length; i++){
+                    connection.query(query,[lastId+i,id_player,id_attributes[i],0], function(err,rows,fields){
+                        if(!err) {
+                        }
+                    });
+                    connection.on('error', function(err) {
+                        res.status(400).json('Insert error', {id_player: id_player,attributes: id_attributes[i]})    
+                        return
+                    });
         
+        
+                }
+                connection.release();
+    
+            } else {
+                console.log(err);
+                connection.release();
+                res.status(500).json('Error obteniendo el último ID');
+            }
+        });
+
         console.log('Antes del succes');
         res.status(200).json('Success');
        
@@ -132,46 +146,6 @@ Input:
 data = [20,10]
 Description: Simple MYSQL query
 */
-
-initial_attributes.post('/spend_attribute/', (req,res,next)=>{
-    var spent_attribute = req.body;
-    var id_player = spent_attribute.id_player
-
-    var new_data = spent_attribute.new_data
-    var id_attributes = spent_attribute.id_attributes
-    console.log('Estos son los attributes:')
-    console.log(spent_attribute)
-
-
-    var insertInto = 'UPDATE playerss_attributes set data = data - ? WHERE playerss_attributes.id_playerss = ? AND  playerss_attributes.id_attributes = ?'
-    var query = insertInto
-
-    console.log('Este es el query original')
-    console.log(query)
-    mysqlConnection.getConnection(function(err, connection) {
-        if (err){
-            res.status(400).json({message:'No se pudo obtener una conexion para realizar la consulta en la base de datos, consulte nuevamente', error: err})
-            throw err
-        } 
-        connection.query(query,[new_data, id_player,id_attributes], function(err,rows,fields){
-            if (!err){
-                console.log(rows.affectedRows);
-                if (rows.affectedRows) {
-                    res.status(200).json("success")
-                    }
-                else {
-                    res.status(400).json("no matches")
-                }
-            } else {
-                console.log(err);
-                res.status(400).json({message:'No se pudo consultar a la base de datos', error: err})
-            }
-            connection.release();
-
-        });
-    })
-        
-});
 
 initial_attributes.post('/spent_attribute/', (req,res,next)=>{
     var spent_attribute = req.body;

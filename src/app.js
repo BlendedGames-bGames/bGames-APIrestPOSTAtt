@@ -1,7 +1,7 @@
 import logger from 'morgan';
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import cors from 'cors'
+import cors from 'cors';
 
 //Routes
 import initial_attributes from './routes/initial_attributes';
